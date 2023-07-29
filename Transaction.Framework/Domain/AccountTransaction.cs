@@ -7,5 +7,6 @@ namespace Transaction.Framework.Domain
         public int UserID { get; set; }
         public TransactionType TransactionType { get; set; }
         public Money Amount { get; set; }
+        public int AccountNumber { get; set; }
     }
 }
