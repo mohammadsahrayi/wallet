@@ -26,7 +26,7 @@ namespace Transaction.WebApi.Mappers
         {
             var identity = _identityService.GetIdentity();
 
-            destination.AccountNumber = identity.AccountNumber;
+            destination.UserID = identity.AccountNumber;
             destination.Amount = new Money(source.Amount, identity.Currency.TryParseEnum<Currency>());
         }
 

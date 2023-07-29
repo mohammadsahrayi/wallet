@@ -13,23 +13,14 @@ using Transaction.WebApi.Services;
 public class WalletController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
-    private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
 
-    public WalletController(ITransactionService transactionService, IIdentityService identityService, IMapper mapper)
+    public WalletController(ITransactionService transactionService, IMapper mapper)
     {
         _transactionService = transactionService;
-        _identityService = identityService;
         _mapper = mapper;
     }
 
-
-    private async Task<IActionResult> Balance()
-    {
-        var accountNumber = _identityService.GetIdentity().AccountNumber;
-        var transactionResult = await _transactionService.Balance(accountNumber);
-        return Ok(_mapper.Map<TransactionResultModel>(transactionResult));
-    }
     [HttpGet("Wallet/transaction")]
     public async Task<IActionResult> TransactionReport(TransactionReportFilterModel transactionReportFilterModel)
     {
@@ -55,21 +46,7 @@ public class WalletController : ControllerBase
         return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
     }
 
-    private async Task<IActionResult> Deposit([FromBody] TransactionModel accountTransactionModel)
-    {
-        var accountTransaction = _mapper.Map<AccountTransaction>(accountTransactionModel);
-        accountTransaction.TransactionType = TransactionType.Deposit;
-        var result = await _transactionService.Deposit(accountTransaction);
-        return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
-    }
 
-    private async Task<IActionResult> Withdraw([FromBody] TransactionModel accountTransactionModel)
-    {
-        var accountTransaction = _mapper.Map<AccountTransaction>(accountTransactionModel);
-        accountTransaction.TransactionType = TransactionType.Withdrawal;
-        var result = await _transactionService.Withdraw(accountTransaction);
-        return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
-    }
 }
 
 

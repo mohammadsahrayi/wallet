@@ -5,7 +5,7 @@ namespace Transaction.WebApi.Models
 {
     public class TransactionModel
     {
-        public IdentityUser UserID { get; set; }
+        public int UserID { get; set; }
         public TransactionType TransactionType { get; set; }
         public decimal Amount { get; set; }
     }

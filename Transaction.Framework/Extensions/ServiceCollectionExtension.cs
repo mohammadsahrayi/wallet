@@ -14,27 +14,28 @@
     using Microsoft.AspNetCore.Mvc;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.Swagger;
+    using Microsoft.Extensions.Logging;
 
     public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddTransactionFramework(this IServiceCollection services, IConfiguration configuration)
         {
-
+            // Connection String
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("SqlServerConnection")));
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
             services.Configure<MvcOptions>(c =>
              c.Conventions.Add(new SwaggerApplicationConvention()));
+
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddControllers();
-            // Service
-            services.AddScoped<ITransactionService, TransactionService>();
+
+
 
             // Repository
             services.AddScoped<IAccountSummaryRepository, AccountSummaryRepository>();
             services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
-
             // Mappers
 
             var mapperConfig = new MapperConfiguration(mc =>
@@ -44,10 +45,13 @@
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+            //loger
+   
 
-            // Connection String
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("SqlServerConnection")));
-        
+            // Service
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddControllers();
+
             return services;
         }
     }
