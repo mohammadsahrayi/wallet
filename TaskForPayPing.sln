@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskForPayPing", "TaskForPayPing.csproj", "{CEF1823D-64D6-4792-A41F-D5CC437F6E1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskForPayPing", "TaskForPayPing.csproj", "{CEF1823D-64D6-4792-A41F-D5CC437F6E1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framwork", "Framwork", "{4D76A353-84D3-4F4F-BE34-4A8ADE577816}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transaction.Framework", "..\Transaction.Framework\Transaction.Framework.csproj", "{AA73182B-CC0B-4805-80A3-0ABC21D9EE46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{CEF1823D-64D6-4792-A41F-D5CC437F6E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEF1823D-64D6-4792-A41F-D5CC437F6E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEF1823D-64D6-4792-A41F-D5CC437F6E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA73182B-CC0B-4805-80A3-0ABC21D9EE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA73182B-CC0B-4805-80A3-0ABC21D9EE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA73182B-CC0B-4805-80A3-0ABC21D9EE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA73182B-CC0B-4805-80A3-0ABC21D9EE46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA73182B-CC0B-4805-80A3-0ABC21D9EE46} = {4D76A353-84D3-4F4F-BE34-4A8ADE577816}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A37EF8AB-4D7C-4114-B8C5-9BBB2BE1516A}
