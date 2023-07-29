@@ -10,11 +10,24 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
+    using Microsoft.OpenApi.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+    using Swashbuckle.AspNetCore.Swagger;
 
     public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddTransactionFramework(this IServiceCollection services, IConfiguration configuration)
         {
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
+            services.Configure<MvcOptions>(c =>
+             c.Conventions.Add(new SwaggerApplicationConvention()));
+            services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
+            services.AddControllers();
             // Service
             services.AddScoped<ITransactionService, TransactionService>();
 

@@ -24,7 +24,7 @@ public class WalletController : ControllerBase
     }
 
 
-    public async Task<IActionResult> Balance()
+    private async Task<IActionResult> Balance()
     {
         var accountNumber = _identityService.GetIdentity().AccountNumber;
         var transactionResult = await _transactionService.Balance(accountNumber);
@@ -55,7 +55,7 @@ public class WalletController : ControllerBase
         return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
     }
 
-    public async Task<IActionResult> Deposit([FromBody] TransactionModel accountTransactionModel)
+    private async Task<IActionResult> Deposit([FromBody] TransactionModel accountTransactionModel)
     {
         var accountTransaction = _mapper.Map<AccountTransaction>(accountTransactionModel);
         accountTransaction.TransactionType = TransactionType.Deposit;
@@ -63,7 +63,7 @@ public class WalletController : ControllerBase
         return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
     }
 
-    public async Task<IActionResult> Withdraw([FromBody] TransactionModel accountTransactionModel)
+    private async Task<IActionResult> Withdraw([FromBody] TransactionModel accountTransactionModel)
     {
         var accountTransaction = _mapper.Map<AccountTransaction>(accountTransactionModel);
         accountTransaction.TransactionType = TransactionType.Withdrawal;
