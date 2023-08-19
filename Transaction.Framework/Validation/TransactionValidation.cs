@@ -11,19 +11,14 @@
         {
             var amount = accountTransaction.Amount;
 
-            if (amount.Currency == Currency.Unknown)
-            {
-                throw new InvalidCurrencyException(amount.Currency.ToString());
-            }
-
             if (amount <= 0)
             {
-                throw new InvalidAmountException(amount.Amount);
+                throw new InvalidAmountException(amount);
             }
 
             if (accountTransaction.TransactionType == TransactionType.Withdrawal)
             {
-                if (amount > accountSummary.Balance)
+                if (amount > accountSummary.Balance.Amount)
                 {
                     throw new InsufficientBalanceException();
                 }

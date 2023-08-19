@@ -11,14 +11,14 @@
     {
         public MappingProfile()
         {
-            _ = CreateMap<AccountSummaryEntity, AccountSummary>()
+            CreateMap<AccountSummaryEntity, AccountSummary>()
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(o => new Money(o.Balance,o.Currency.TryParseEnum<Currency>())));
 
             CreateMap<AccountTransaction, AccountTransactionEntity>()
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(o => DateTime.UtcNow))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(o => o.TransactionType == TransactionType.Deposit ? StringResources.DepositDescription : StringResources.WithdrawDescription))
                 .ForMember(dest => dest.TransactionType, opt => opt.MapFrom(o => o.TransactionType.ToString()))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(o => o.Amount.Amount));
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(o => o.Amount));
 
             CreateMap<AccountSummary, AccountSummaryEntity>()
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(o => o.Balance.Amount))
@@ -33,7 +33,7 @@
             CreateMap<AccountSummary, TransactionResult>()
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(o => o.Balance))
                 .ForMember(dest => dest.IsSuccessful, opt => opt.MapFrom(o => true))
-                .ForMember(dest => dest.Message, opt => opt.MapFrom(o => StringResources.TransactionSuccessfull)); 
+                .ForMember(dest => dest.Message, opt => opt.MapFrom(o => StringResources.TransactionSuccessfull));
         }
     }
 }

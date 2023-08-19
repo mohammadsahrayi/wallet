@@ -63,8 +63,7 @@
                 int accountNumber = 29489324;
                 AccountSummaryEntity accountSummary=null;
 
-                AccountSummaryRepositoryMock
-                    .Setup(i => i.Read(It.IsAny<int>()))
+                Moq.Language.Flow.IReturnsResult<IAccountSummaryRepository> returnsResult = AccountSummaryRepositoryMock.Setup(i => i.Read(It.IsAny<int>()))
                     .ReturnsAsync(accountSummary);
 
                 // Act
@@ -92,7 +91,7 @@
                 {
                     AccountNumber = 1253667,
                     TransactionType = Types.TransactionType.Deposit,
-                    Amount = new Types.Money(1000, Types.Currency.Rial)
+                    Amount = new Types.Money(1000, Types.Currency.Rial).Amount
                 };
 
                 AccountTransactionRepositoryMock
@@ -125,7 +124,7 @@
                 {
                     AccountNumber = 1253667,
                     TransactionType = Types.TransactionType.Deposit,
-                    Amount = new Types.Money(0, Types.Currency.Rial)
+                    Amount = new Types.Money(0, Types.Currency.Rial).Amount
                 };
 
                 AccountTransactionRepositoryMock
@@ -161,7 +160,7 @@
                 {
                     AccountNumber = 1253667,
                     TransactionType = Types.TransactionType.Withdrawal,
-                    Amount = new Types.Money(1000, Types.Currency.Rial)
+                    Amount = new Types.Money(1000, Types.Currency.Rial).Amount
                 };
 
                 AccountTransactionRepositoryMock
@@ -194,7 +193,7 @@
                 {
                     AccountNumber = 1253667,
                     TransactionType = Types.TransactionType.Withdrawal,
-                    Amount = new Types.Money(65000, Types.Currency.Rial)
+                    Amount = new Types.Money(65000, Types.Currency.Rial).Amount
                 };
 
                 AccountTransactionRepositoryMock

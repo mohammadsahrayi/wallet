@@ -21,29 +21,21 @@ public class WalletController : ControllerBase
         _mapper = mapper;
     }
 
+
+    [HttpPost("Wallet/transaction")]
+    public async Task<IActionResult> Transaction([FromBody] TransactionModel TransactionModel)
+    {
+        var Transaction = _mapper.Map<AccountTransaction>(TransactionModel);
+        if (TransactionModel.TransactionType == TransactionType.Deposit)
+            return Created(string.Empty, _mapper.Map<TransactionResultModel>(await _transactionService.Deposit(Transaction)));
+        return Created(string.Empty, _mapper.Map<TransactionResultModel>(await _transactionService.Withdraw(Transaction)));
+    }
     [HttpGet("Wallet/transaction")]
     public async Task<IActionResult> TransactionReport(TransactionReportFilterModel transactionReportFilterModel)
     {
         var transactionResult = await _transactionService.TransactionReport(transactionReportFilterModel);
         return Ok(_mapper.Map<TransactionResultModel>(transactionResult));
 
-    }
-
-    [HttpPost("Wallet/transaction")]
-    public async Task<IActionResult> Transaction([FromBody] TransactionModel TransactionModel)
-    {
-        var Transaction = _mapper.Map<AccountTransaction>(TransactionModel);
-        Transaction.TransactionType = TransactionModel.TransactionType;
-        var result = new TransactionResult();
-        if (TransactionModel.TransactionType == TransactionType.Deposit)
-        {
-            result = await _transactionService.Deposit(Transaction);
-        }
-        else
-        {
-            result = await _transactionService.Withdraw(Transaction);
-        }
-        return Created(string.Empty, _mapper.Map<TransactionResultModel>(result));
     }
 
 

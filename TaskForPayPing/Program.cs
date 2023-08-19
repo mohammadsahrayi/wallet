@@ -1,4 +1,6 @@
+using AutoMapper;
 using Transaction.Framework.Extensions;
+using Transaction.WebApi.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,8 @@ builder.Services.AddTransactionFramework(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransactionMapper();
+
 
 var app = builder.Build();
 
