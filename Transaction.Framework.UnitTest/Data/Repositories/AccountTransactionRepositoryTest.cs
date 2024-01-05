@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Transaction.Framework.Data;
@@ -22,7 +23,6 @@ namespace Transaction.Framework.UnitTest.Data.Repositories
             DbContextInMemory = GetInMemoryDbContext();
             MappingConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
             Mapper = MappingConfig.CreateMapper();
-            AccountTransactionRepositoryUnderTest = new AccountTransactionRepository(DbContextInMemory);
         }
 
         public class Create : AccountTransactionRepositoryTest
@@ -44,10 +44,11 @@ namespace Transaction.Framework.UnitTest.Data.Repositories
 
         private static ApplicationDbContext GetInMemoryDbContext()
         {
+            var builder = WebApplication.CreateBuilder();
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                      .UseNpgsql("simpletransactiondb")
+                      .UseSqlServer("WebApiDatabase")
                       .Options;
-            var context = new ApplicationDbContext(options);
+            var context = new ApplicationDbContext(options, builder.Configuration);
 
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();

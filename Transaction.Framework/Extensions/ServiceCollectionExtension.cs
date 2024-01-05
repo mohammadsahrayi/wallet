@@ -21,7 +21,7 @@
         public static IServiceCollection AddTransactionFramework(this IServiceCollection services, IConfiguration configuration)
         {
             // Connection String
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("SqlServerConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebApiDatabase")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });

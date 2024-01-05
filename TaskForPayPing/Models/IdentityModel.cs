@@ -9,7 +9,7 @@ namespace Transaction.WebApi.Models
     {
         public Guid UserID { get; set; }
         public int AccountNumber { get; set; }
-        public string FullName { get; set; }
-        public string Currency { get; set; }
+        public required string FullName { get; set; }
+        public required string Currency { get; set; }
     }
 }

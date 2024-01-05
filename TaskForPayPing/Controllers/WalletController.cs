@@ -23,15 +23,16 @@ public class WalletController : ControllerBase
 
 
     [HttpPost("Wallet/transaction")]
-    public async Task<IActionResult> Transaction([FromBody] TransactionModel TransactionModel)
+    public async Task<IActionResult> Transaction([FromBody] AccountTransaction TransactionModel)
     {
-        var Transaction = _mapper.Map<AccountTransaction>(TransactionModel);
-        if (TransactionModel.TransactionType == TransactionType.Deposit)
-            return Created(string.Empty, _mapper.Map<TransactionResultModel>(await _transactionService.Deposit(Transaction)));
-        return Created(string.Empty, _mapper.Map<TransactionResultModel>(await _transactionService.Withdraw(Transaction)));
+        return Created(
+            string.Empty,
+            TransactionModel.TransactionType == TransactionType.Deposit ? 
+            await _transactionService.Deposit(TransactionModel) :
+            await _transactionService.Withdraw(TransactionModel));
     }
     [HttpGet("Wallet/transaction")]
-    public async Task<IActionResult> TransactionReport(TransactionReportFilterModel transactionReportFilterModel)
+    public async Task<IActionResult> TransactionReport([FromQuery]TransactionReportFilterModel transactionReportFilterModel)
     {
         var transactionResult = await _transactionService.TransactionReport(transactionReportFilterModel);
         return Ok(_mapper.Map<TransactionResultModel>(transactionResult));

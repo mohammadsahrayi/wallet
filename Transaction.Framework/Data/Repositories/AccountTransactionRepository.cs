@@ -92,10 +92,10 @@
                                             && x.Date.Date <= transactionReportFilterModel.EndDate.Date
                                             )).ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 

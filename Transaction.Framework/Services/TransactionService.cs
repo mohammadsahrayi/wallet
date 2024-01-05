@@ -47,10 +47,9 @@
 
             Guard.ArgumentNotNull(nameof(accountTransaction), accountTransaction);
 
-            var accountNumber = accountTransaction.UserID;
-            var accountSummary = await GetAccountSummary(accountNumber);
+            var accountSummary = await GetAccountSummary(accountTransaction.AccountNumber);
 
-            await accountSummary.Validate(accountNumber);
+            await accountSummary.Validate(accountTransaction.AccountNumber);
             await accountTransaction.Validate(accountSummary);
 
             var balance = accountSummary.Balance;
@@ -117,8 +116,7 @@
         {
             var accountSummaryEntity = await _accountSummaryRepository
                 .Read(accountNumber);
-
-            return _mapper.Map<AccountSummary>(accountSummaryEntity);
+            return accountSummaryEntity == null ? new AccountSummary() : _mapper.Map<AccountSummary>(accountSummaryEntity);
         }
 
         #endregion

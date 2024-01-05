@@ -8,7 +8,7 @@
         public int AccountNumber { get; set; }
         public bool IsSuccessful { get; set; }
         public Money Balance { get; set; }
-        public string Message { get; set; }   
+        public required string Message { get; set; }   
         public Guid UserID { get; set; }
         public DateTime Date { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Transaction.Framework.Data;
@@ -59,10 +60,11 @@ namespace Transaction.Framework.UnitTest.Data.Repositories
 
         private static ApplicationDbContext GetInMemoryDbContext()
         {
+            var builder = WebApplication.CreateBuilder();
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                      .UseNpgsql("simpletransactiondb")
+                      .UseSqlServer("simpletransactiondb")
                       .Options;
-            var context = new ApplicationDbContext(options);
+            var context = new ApplicationDbContext(options,builder.Configuration);
 
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();

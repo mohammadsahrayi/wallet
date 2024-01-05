@@ -8,8 +8,8 @@ namespace Transaction.Framework.Data.Entities
     public class AccountSummaryEntity
     {
         [Key]
-        public int AccountNumber { get; set; }
-        public decimal Balance { get; set; }
+        public int AccountNumber { get; set; }      
+        public required decimal Balance { get; set; }
         public required string Currency { get; set; }
         public ICollection<AccountTransactionEntity>? AccountTransactions { get; set; }
     }

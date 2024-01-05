@@ -17,7 +17,7 @@
 
         public IdentityModel GetIdentity()
         {
-            string authorizationHeader = _context.HttpContext.Request.Headers["Authorization"];
+            string? authorizationHeader = _context?.HttpContext?.Request?.Headers?["Authorization"];
 
             if (authorizationHeader != null)
             {
@@ -43,10 +43,10 @@
 
                 return new IdentityModel()
                 {
-                    AccountNumber = Convert.ToInt32(account.Value),
-                    FullName = name.Value,
-                    Currency = currency.Value,
-                    UserID = Guid.Parse(UserID.Value)
+                    AccountNumber = Convert.ToInt32(account?.Value),
+                    FullName = name?.Value,
+                    Currency = currency?.Value,
+                    UserID = Guid.Parse(input: UserID?.Value)
                 };
             }
 
