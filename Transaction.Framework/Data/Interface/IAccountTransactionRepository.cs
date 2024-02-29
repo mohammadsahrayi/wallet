@@ -8,6 +8,7 @@
 
     public interface IAccountTransactionRepository
     {
+        Task Update(AccountTransactionEntity accountTransactionEntity, AccountSummaryEntity accountSummaryEntity);
         Task Create(AccountTransactionEntity accountTransactionEntity, AccountSummaryEntity accountSummaryEntity);
         Task<IEnumerable<AccountTransactionEntity>> Get(TransactionReportFilterModel transactionReportFilterModel);
     }

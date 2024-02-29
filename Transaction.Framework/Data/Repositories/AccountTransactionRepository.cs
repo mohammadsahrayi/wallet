@@ -27,7 +27,6 @@
         public async Task Create(AccountTransactionEntity accountTransactionEntity, AccountSummaryEntity accountSummaryEntity)
         {
             _accountTransactionEntity.Add(accountTransactionEntity);
-            _accountSummaryEntity.Update(accountSummaryEntity);
 
             bool isSaved = false;
 
@@ -54,14 +53,22 @@
                                 void CalculateNewBalance()
                                 {
                                     decimal balance = (decimal)(entry.OriginalValues["Balance"] ?? 0);
-                                    decimal amount = (decimal)(accountTransactionEntity.Amount == null ? 0 : accountTransactionEntity.Amount);
+                                    decimal amount;
+                                    if (accountTransactionEntity?.Amount != null)
+                                    {
+                                        amount = accountTransactionEntity.Amount;
+                                    }
+                                    else
+                                    {
+                                        amount = 0;
+                                    }
 
-                                    if (accountTransactionEntity.TransactionType == TransactionType.Deposit.ToString())
+                                    if (accountTransactionEntity?.TransactionType == TransactionType.Deposit.ToString())
                                     {
                                         accountSummaryEntity.Balance =
                                         balance += amount;
                                     }
-                                    else if (accountTransactionEntity.TransactionType == TransactionType.Withdrawal.ToString())
+                                    else if (accountTransactionEntity?.TransactionType == TransactionType.Withdrawal.ToString())
                                     {
                                         if (amount > balance)
                                             throw new InsufficientBalanceException();
@@ -99,5 +106,69 @@
             }
         }
 
+        public async Task Update(AccountTransactionEntity accountTransactionEntity, AccountSummaryEntity accountSummaryEntity)
+        {
+            _accountTransactionEntity.Add(accountTransactionEntity);
+            _accountSummaryEntity.Update(accountSummaryEntity);
+
+            bool isSaved = false;
+
+            while (!isSaved)
+            {
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                    isSaved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    foreach (var entry in ex.Entries)
+                    {
+                        if (entry.Entity is AccountSummaryEntity)
+                        {
+                            var databaseValues = entry.GetDatabaseValues();
+
+                            if (databaseValues != null)
+                            {
+                                entry.OriginalValues.SetValues(databaseValues);
+                                CalculateNewBalance();
+
+                                void CalculateNewBalance()
+                                {
+                                    decimal balance = (decimal)(entry.OriginalValues["Balance"] ?? 0);
+                                    decimal amount;
+                                    if (accountTransactionEntity?.Amount != null)
+                                    {
+                                        amount = accountTransactionEntity.Amount;
+                                    }
+                                    else
+                                    {
+                                        amount = 0;
+                                    }
+
+                                    if (accountTransactionEntity?.TransactionType == TransactionType.Deposit.ToString())
+                                    {
+                                        accountSummaryEntity.Balance =
+                                        balance += amount;
+                                    }
+                                    else if (accountTransactionEntity?.TransactionType == TransactionType.Withdrawal.ToString())
+                                    {
+                                        if (amount > balance)
+                                            throw new InsufficientBalanceException();
+
+                                        accountSummaryEntity.Balance =
+                                        balance -= amount;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                throw new NotSupportedException();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -13,32 +13,38 @@
     using Transaction.Framework.Validation;
     using System.Collections.Generic;
     using Newtonsoft.Json;
+    using Transaction.Framework.Mappers;
 
     public class TransactionService : ITransactionService
     {
         private readonly IAccountSummaryRepository _accountSummaryRepository;
         private readonly IAccountTransactionRepository _accountTransactionRepository;
-        private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly MapperConfiguration config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
 
-        public TransactionService(IAccountSummaryRepository accountSummaryRepository, IAccountTransactionRepository accountTransactionRepository, IMapper mapper,ILogger<TransactionService> logger)
+        public TransactionService(IAccountSummaryRepository accountSummaryRepository, IAccountTransactionRepository accountTransactionRepository, ILogger<TransactionService> logger)
         {
             _accountSummaryRepository = accountSummaryRepository ?? throw new ArgumentNullException(nameof(accountSummaryRepository));
             _accountTransactionRepository = accountTransactionRepository ?? throw new ArgumentNullException(nameof(accountTransactionRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+          
         }
 
         public async Task<TransactionResult> Balance(int accountNumber)
         {
             var accountSummary = await GetAccountSummary(accountNumber);
             await accountSummary.Validate(accountNumber);
-            return _mapper.Map<TransactionResult>(accountSummary);
+            var mapper = config.CreateMapper();
+            return mapper.Map<TransactionResult>(accountSummary);
         }
         public async Task<IEnumerable<TransactionResult>> TransactionReport(TransactionReportFilterModel transactionReportFilterModel)
         {
             var TransactionReportResult = await _accountTransactionRepository.Get(transactionReportFilterModel);
-            return _mapper.Map<IEnumerable<TransactionResult>>(TransactionReportResult);
+            var mapper = config.CreateMapper();
+            return mapper.Map<IEnumerable<TransactionResult>>(TransactionReportResult);
         }
 
         public async Task<TransactionResult> Deposit(AccountTransaction accountTransaction)
@@ -76,7 +82,7 @@
 
             Guard.ArgumentNotNull(nameof(accountTransaction), accountTransaction);
 
-            var accountNumber = accountTransaction.UserID;
+            var accountNumber = accountTransaction.AccountNumber;
             var accountSummary = await GetAccountSummary(accountNumber);
 
             await accountSummary.Validate(accountNumber);
@@ -100,23 +106,46 @@
 
         private async Task<TransactionResult> CreateTransactionAndUpdateSummary(AccountTransaction accountTransaction, AccountSummary accountSummary)
         {
-            var accountTransactionEntity = _mapper.Map<AccountTransactionEntity>(accountTransaction);
-            var accountSummaryEntity = _mapper.Map<AccountSummaryEntity>(accountSummary);
 
-            await _accountTransactionRepository.Create(accountTransactionEntity, accountSummaryEntity);
-            var currentSummary = await _accountSummaryRepository.Read(accountTransaction.UserID);
+            var currentSummary = await _accountSummaryRepository.Read(accountTransaction.AccountNumber);
+            if (currentSummary is null)
+            {
+                var mapper = config.CreateMapper();
 
-            var result = _mapper.Map<TransactionResult>(accountTransactionEntity);
+                var accountTransactionEntity = mapper.Map<AccountTransactionEntity>(accountTransaction);
+                var accountSummaryEntity = mapper.Map<AccountSummaryEntity>(accountSummary);
 
-            result.Balance = new Money(currentSummary.Balance, currentSummary.Currency.TryParseEnum<Currency>());
-            return result;
+                await _accountTransactionRepository.Update(accountTransactionEntity, accountSummaryEntity);
+
+
+                var result = mapper.Map<TransactionResult>(accountTransactionEntity);
+
+                //result.Balance = new Money(currentSummary.Balance, currentSummary.Currency.TryParseEnum<Currency>());
+                return result;
+            }
+            else
+            {
+                var mapper = config.CreateMapper();
+
+                var accountTransactionEntity = mapper.Map<AccountTransactionEntity>(accountTransaction);
+                var accountSummaryEntity = mapper.Map<AccountSummaryEntity>(accountSummary);
+
+                await _accountTransactionRepository.Create(accountTransactionEntity, accountSummaryEntity);
+
+
+                var result = mapper.Map<TransactionResult>(accountTransactionEntity);
+
+                result.Balance = new Money(currentSummary.Balance, currentSummary.Currency.TryParseEnum<Currency>());
+                return result;
+            }
+           
         }
-
         private async Task<AccountSummary> GetAccountSummary(int accountNumber)
         {
             var accountSummaryEntity = await _accountSummaryRepository
                 .Read(accountNumber);
-            return accountSummaryEntity == null ? new AccountSummary() : _mapper.Map<AccountSummary>(accountSummaryEntity);
+            var mapper = config.CreateMapper();
+            return accountSummaryEntity == null ? new AccountSummary() : mapper.Map<AccountSummary>(accountSummaryEntity);
         }
 
         #endregion

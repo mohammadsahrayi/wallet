@@ -33,7 +33,7 @@ namespace Transaction.WebApi.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext context, Exception e)
         {
-            var result = new TransactionResultModel() { IsSuccessful = false, Message = e.Message };
+            var result = new TransactionResultModel() { IsSuccessful = false, Message = e.Message, Currency=string.Empty };
             int statusCode;
 
             if (e is ArgumentException || e is ArgumentNullException)

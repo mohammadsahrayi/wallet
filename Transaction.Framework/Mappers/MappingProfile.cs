@@ -15,10 +15,13 @@
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(o => new Money(o.Balance,o.Currency.TryParseEnum<Currency>())));
 
             CreateMap<AccountTransaction, AccountTransactionEntity>()
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(o => new Random().Next()))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(o => DateTime.UtcNow))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(o => o.TransactionType == TransactionType.Deposit ? StringResources.DepositDescription : StringResources.WithdrawDescription))
                 .ForMember(dest => dest.TransactionType, opt => opt.MapFrom(o => o.TransactionType.ToString()))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(o => o.Amount));
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(o => o.Amount))
+                .ForMember(dest => dest.UserID, opt => opt.MapFrom(o => o.UserID))
+                .ForMember(dest => dest.AccountNumber, opt => opt.MapFrom(o => o.AccountNumber));
 
             CreateMap<AccountSummary, AccountSummaryEntity>()
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(o => o.Balance.Amount))
